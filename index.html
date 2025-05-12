@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://4kwallpapers.com/images/walls/thumbs_3t/13559.png');
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
+      text-align: center;
+      background-repeat: no-repeat;
+    }
+
+    .content {
+      position: relative;
+      padding: 40px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: #ff66cc;
+      text-shadow:
+        0 0 10px #ff66cc,
+        0 0 20px #ff33cc,
+        0 0 30px #cc0099;
+      margin-bottom: 20px;
+    }
+
+    #timer {
+      font-size: 3rem;
+      color: #ff66cc;
+      text-shadow:
+        0 0 10px #ff66cc,
+        0 0 20px #ff33cc;
+    }
+
+    #toggleButton {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background-color: #ff66cc;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      text-shadow: 0 0 5px #ff33cc, 0 0 10px #ff33cc;
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
+    }
+
+    #toggleButton:hover {
+      background-color: #cc0099;
+    }
+
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      #timer {
+        font-size: 2rem;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button id="toggleButton">Switch to Days</button>
+
+  <div class="content">
+    <h1>TIME UNTIL 26 MAY 2026</h1>
+    <div id="timer">Loading...</div>
+  </div>
+
+  <script>
+    const targetDate = new Date("2026-05-27T00:00:00").getTime();
+    let displayFormat = 'full';
+
+    function formatNumberWithSpaces(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function updateTimer() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        document.getElementById("timer").innerHTML = "IT'S HERE!";
+        return;
+      }
+
+      if (displayFormat === 'full') {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("timer").innerHTML =
+          formatNumberWithSpaces(days) + "d " + formatNumberWithSpaces(hours) + "h " + formatNumberWithSpaces(minutes) + "m " + formatNumberWithSpaces(seconds) + "s";
+      } else {
+        const seconds = Math.floor(distance / 1000);
+        const milliseconds = distance % 1000;
+
+        document.getElementById("timer").innerHTML =
+          formatNumberWithSpaces(seconds) + "s " + String(milliseconds).padStart(3, '0') + "ms";
+      }
+
+      requestAnimationFrame(updateTimer);
+    }
+
+    document.getElementById("toggleButton").onclick = function() {
+      if (displayFormat === 'full') {
+        displayFormat = 'short';
+        this.innerHTML = "Switch to Days";
+      } else {
+        displayFormat = 'full';
+        this.innerHTML = "Switch to Seconds";
+      }
+    };
+
+    updateTimer();
+  </script>
+
+</body>
+</html>
