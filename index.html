@@ -203,12 +203,40 @@
     const soundButton = document.getElementById("soundButton");
     const volumeSlider = document.getElementById("volumeSlider");
 
-    // Обновяване на иконата 🔇 / 🔊
+    // Start video from 6 seconds
+    video.addEventListener("loadedmetadata", function () {
+      if (video.duration > 6) {
+        video.currentTime = 6;
+      }
+    });
+
+    // Also reset to 6 seconds when toggling back to video
+    toggleBackground.onclick = function () {
+      const showingVideo = video.style.display !== "none";
+
+      if (showingVideo) {
+        video.style.display = "none";
+        image.style.display = "block";
+        toggleBackground.innerHTML = "▶️";
+      } else {
+        video.style.display = "block";
+        image.style.display = "none";
+        toggleBackground.innerHTML = "🖼️";
+
+        if (video.readyState >= 1) {
+          video.currentTime = 6;
+        } else {
+          video.addEventListener("loadedmetadata", () => video.currentTime = 6, { once: true });
+        }
+      }
+    };
+
+    // Update sound icon
     function updateSoundIcon() {
       soundButton.innerHTML = video.muted || video.volume === 0 ? "🔇" : "🔊";
     }
 
-    // Натискане на бутона звук
+    // Sound toggle
     soundButton.onclick = function () {
       video.muted = !video.muted;
       if (!video.muted && video.volume === 0) {
@@ -218,14 +246,14 @@
       updateSoundIcon();
     };
 
-    // Промяна на силата на звука чрез плъзгача
+    // Volume slider
     volumeSlider.oninput = function () {
       video.volume = this.value;
       video.muted = this.value == 0;
       updateSoundIcon();
     };
 
-    // Таймер
+    // Timer
     function formatNumberWithSpaces(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
@@ -265,21 +293,6 @@
     document.getElementById("toggleButton").onclick = function () {
       displayFormat = (displayFormat === 'full') ? 'short' : 'full';
       this.innerHTML = (displayFormat === 'full') ? "Switch to Seconds" : "Switch to Days";
-    };
-
-    // Смяна на фон
-    toggleBackground.onclick = function () {
-      const showingVideo = video.style.display !== "none";
-
-      if (showingVideo) {
-        video.style.display = "none";
-        image.style.display = "block";
-        toggleBackground.innerHTML = "▶️";
-      } else {
-        video.style.display = "block";
-        image.style.display = "none";
-        toggleBackground.innerHTML = "🖼️";
-      }
     };
 
     updateSoundIcon();
