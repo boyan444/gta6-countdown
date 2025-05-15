@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Countdown Timer</title>
+  <title>GTA 6 Countdown</title>
   <style>
     * {
       margin: 0;
@@ -112,6 +112,12 @@
       z-index: 100;
     }
 
+    #volumeControl button:disabled,
+    #volumeControl input:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
     #volumeControl button {
       background: none;
       border: none;
@@ -203,31 +209,47 @@
     const soundButton = document.getElementById("soundButton");
     const volumeSlider = document.getElementById("volumeSlider");
 
-    // Start video from 6 seconds
+    let videoPausedAt = 0;
+
+    // Track video time on pause
+    video.onpause = function() {
+      videoPausedAt = video.currentTime;
+    };
+
+    // Start video from 6 seconds on first load
     video.addEventListener("loadedmetadata", function () {
       if (video.duration > 6) {
         video.currentTime = 6;
       }
     });
 
-    // Also reset to 6 seconds when toggling back to video
+    // Toggle background (pause and resume video at the same time)
     toggleBackground.onclick = function () {
       const showingVideo = video.style.display !== "none";
 
       if (showingVideo) {
+        // Pause the video and remember the current time
+        videoPausedAt = video.currentTime;
+        video.pause();
         video.style.display = "none";
         image.style.display = "block";
         toggleBackground.innerHTML = "▶️";
+
+        // Disable volume controls
+        soundButton.disabled = true;
+        volumeSlider.disabled = true;
       } else {
         video.style.display = "block";
         image.style.display = "none";
         toggleBackground.innerHTML = "🖼️";
 
-        if (video.readyState >= 1) {
-          video.currentTime = 6;
-        } else {
-          video.addEventListener("loadedmetadata", () => video.currentTime = 6, { once: true });
-        }
+        // Resume video from where it was paused
+        video.currentTime = videoPausedAt;
+        video.play();
+
+        // Re-enable volume controls
+        soundButton.disabled = false;
+        volumeSlider.disabled = false;
       }
     };
 
