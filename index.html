@@ -82,14 +82,14 @@
 
     #toggleBackground {
       position: fixed;
-      top: 20px;
+      bottom: 80px;
       left: 20px;
-    }
-
-    #soundButton {
-      position: fixed;
-      top: 20px;
-      right: 20px;
+      padding: 10px;
+      font-size: 1.5rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      text-shadow: none;
+      box-shadow: none;
     }
 
     #toggleButton {
@@ -97,6 +97,31 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
+    }
+
+    #volumeControl {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 100;
+    }
+
+    #volumeControl button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    #volumeSlider {
+      width: 100px;
     }
 
     footer {
@@ -128,6 +153,10 @@
       footer {
         font-size: 12px;
       }
+
+      #volumeSlider {
+        width: 70px;
+      }
     }
   </style>
 </head>
@@ -142,14 +171,17 @@
   <!-- Снимка за фон -->
   <img src="image.jpeg" id="background-image" alt="Background image" />
 
-  <!-- Бутон за снимка -->
-  <button id="toggleBackground">Show Image</button>
+  <!-- Бутон за смяна на фон с икона -->
+  <button id="toggleBackground">🖼️</button>
 
-  <!-- Бутон за звук -->
-  <button id="soundButton">Unmute Video</button>
-
-  <!-- Бутон за превключване формат -->
+  <!-- Бутон за превключване на формат -->
   <button id="toggleButton">Switch to Seconds</button>
+
+  <!-- Контейнер за звук -->
+  <div id="volumeControl">
+    <button id="soundButton">🔇</button>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0">
+  </div>
 
   <div class="content">
     <h1>TIME UNTIL 26 MAY 2026</h1>
@@ -162,9 +194,38 @@
   </footer>
 
   <script>
-    const targetDate = new Date("2026-05-26T00:00:00").getTime();
+    const targetDate = new Date("2026-05-27T00:00:00").getTime();
     let displayFormat = 'full';
 
+    const video = document.getElementById("background-video");
+    const image = document.getElementById("background-image");
+    const toggleBackground = document.getElementById("toggleBackground");
+    const soundButton = document.getElementById("soundButton");
+    const volumeSlider = document.getElementById("volumeSlider");
+
+    // Обновяване на иконата 🔇 / 🔊
+    function updateSoundIcon() {
+      soundButton.innerHTML = video.muted || video.volume === 0 ? "🔇" : "🔊";
+    }
+
+    // Натискане на бутона звук
+    soundButton.onclick = function () {
+      video.muted = !video.muted;
+      if (!video.muted && video.volume === 0) {
+        video.volume = 0.5;
+        volumeSlider.value = 0.5;
+      }
+      updateSoundIcon();
+    };
+
+    // Промяна на силата на звука чрез плъзгача
+    volumeSlider.oninput = function () {
+      video.volume = this.value;
+      video.muted = this.value == 0;
+      updateSoundIcon();
+    };
+
+    // Таймер
     function formatNumberWithSpaces(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
@@ -206,27 +267,22 @@
       this.innerHTML = (displayFormat === 'full') ? "Switch to Seconds" : "Switch to Days";
     };
 
-    document.getElementById("soundButton").onclick = function () {
-      const video = document.getElementById("background-video");
-      video.muted = !video.muted;
-      this.innerHTML = video.muted ? "Unmute Video" : "Mute Video";
-    };
+    // Смяна на фон
+    toggleBackground.onclick = function () {
+      const showingVideo = video.style.display !== "none";
 
-    document.getElementById("toggleBackground").onclick = function () {
-      const video = document.getElementById("background-video");
-      const image = document.getElementById("background-image");
-
-      if (video.style.display === "none") {
-        video.style.display = "block";
-        image.style.display = "none";
-        this.innerHTML = "Show Image";
-      } else {
+      if (showingVideo) {
         video.style.display = "none";
         image.style.display = "block";
-        this.innerHTML = "Show Video";
+        toggleBackground.innerHTML = "▶️";
+      } else {
+        video.style.display = "block";
+        image.style.display = "none";
+        toggleBackground.innerHTML = "🖼️";
       }
     };
 
+    updateSoundIcon();
     updateTimer();
   </script>
 </body>
