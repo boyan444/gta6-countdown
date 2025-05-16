@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GTA 6 Countdown</title>
 
+  <!-- SEO мета тагове на английски -->
+  <meta name="description" content="Official countdown to the release of GTA 6 on May 26, 2026. Watch the timer, trailer and background video.">
+  <meta name="keywords" content="GTA 6, GTA VI, countdown, release date, trailer, gta6 timer, gta 6 countdown">
+  <meta name="author" content="Kiselomlqko351">
+
+  <!-- SEO мета тагове на български -->
+  <meta name="description" content="Официално обратно броене до излизането на GTA 6 на 26 май 2026. Гледай таймера, трейлъра и видео фона.">
+  <meta name="keywords" content="GTA 6, GTA VI, обратно броене, дата на излизане, трейлър, gta6 таймер, gta 6 брояч">
+  <meta name="author" content="Kiselomlqko351">
+
+  <!-- Open Graph (за социални мрежи) -->
+  <meta property="og:title" content="GTA 6 Countdown - Таймер за излизането на играта">
+  <meta property="og:description" content="Колко време остава до GTA 6? Влез и виж обратно броене с трейлър, видео фон и ефекти.">
+  <meta property="og:image" content="https://example.com/logo.png"> <!-- Смени с реален линк -->
+  <meta property="og:url" content="https://example.com/"> <!-- Смени с реален линк -->
+  <meta property="og:type" content="website">
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="logo.png" />
 
@@ -26,7 +43,6 @@
       background: none;
     }
 
-    /* === ЛОГО ГОРЕ ВЛЯВО === */
     .logo-container {
       position: fixed;
       top: 30px;
@@ -45,7 +61,6 @@
       transform: scale(1.1);
     }
 
-    /* Останалите стилове от сайта */
     #background-video, #background-image {
       position: fixed;
       top: 0;
@@ -195,29 +210,23 @@
 </head>
 <body>
 
-  <!-- Лого горе вляво -->
   <div class="logo-container">
     <a href="index.html">
       <img src="logo.png" alt="Site Logo" />
     </a>
   </div>
 
-  <!-- Видео фон -->
   <video autoplay muted loop id="background-video">
     <source src="gta6trailer.mp4" type="video/mp4" />
     Your browser does not support video.
   </video>
 
-  <!-- Снимка за фон -->
   <img src="image.jpeg" id="background-image" alt="Background image" />
 
-  <!-- Бутон за смяна на фон с икона -->
   <button id="toggleBackground">🖼️</button>
 
-  <!-- Бутон за превключване на формат -->
   <button id="toggleButton">Switch to Seconds</button>
 
-  <!-- Контейнер за звук -->
   <div id="volumeControl">
     <button id="soundButton">🔇</button>
     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0">
@@ -245,54 +254,42 @@
 
     let videoPausedAt = 0;
 
-    // Track video time on pause
     video.onpause = function() {
       videoPausedAt = video.currentTime;
     };
 
-    // Start video from 6 seconds on first load
     video.addEventListener("loadedmetadata", function () {
       if (video.duration > 6) {
         video.currentTime = 6;
       }
     });
 
-    // Toggle background (pause and resume video at the same time)
     toggleBackground.onclick = function () {
       const showingVideo = video.style.display !== "none";
 
       if (showingVideo) {
-        // Pause the video and remember the current time
         videoPausedAt = video.currentTime;
         video.pause();
         video.style.display = "none";
         image.style.display = "block";
         toggleBackground.innerHTML = "▶️";
-
-        // Disable volume controls
         soundButton.disabled = true;
         volumeSlider.disabled = true;
       } else {
         video.style.display = "block";
         image.style.display = "none";
         toggleBackground.innerHTML = "🖼️";
-
-        // Resume video from where it was paused
         video.currentTime = videoPausedAt;
         video.play();
-
-        // Re-enable volume controls
         soundButton.disabled = false;
         volumeSlider.disabled = false;
       }
     };
 
-    // Update sound icon
     function updateSoundIcon() {
       soundButton.innerHTML = video.muted || video.volume === 0 ? "🔇" : "🔊";
     }
 
-    // Sound toggle
     soundButton.onclick = function () {
       video.muted = !video.muted;
       if (!video.muted && video.volume === 0) {
@@ -302,14 +299,12 @@
       updateSoundIcon();
     };
 
-    // Volume slider
     volumeSlider.oninput = function () {
       video.volume = this.value;
       video.muted = this.value == 0;
       updateSoundIcon();
     };
 
-    // Timer
     function formatNumberWithSpaces(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
